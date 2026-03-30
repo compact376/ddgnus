@@ -4,6 +4,10 @@ region: nyc
 services:
   # ── Backend (Go / Stripe API) — ~$5/month ────────────────────────────────────
   - name: backend
+    github:
+      repo: compact376/ddgnus
+      branch: main
+      deploy_on_push: true
     source_dir: backend
     dockerfile_path: Dockerfile
     http_port: 8080
@@ -43,6 +47,10 @@ services:
 static_sites:
   # ── Frontend (Next.js static export) — FREE ──────────────────────────────────
   - name: frontend
+    github:
+      repo: compact376/ddgnus
+      branch: main
+      deploy_on_push: true
     source_dir: frontend
     build_command: npm run build
     output_dir: out

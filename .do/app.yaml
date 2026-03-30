@@ -8,8 +8,7 @@ services:
       repo: compact376/ddgnus
       branch: main
       deploy_on_push: true
-    source_dir: backend
-    dockerfile_path: Dockerfile
+    dockerfile_path: backend/Dockerfile
     http_port: 8080
     instance_count: 1
     instance_size_slug: basic-xxs

@@ -2,7 +2,7 @@ name: ddgnus
 region: nyc
 
 services:
-  # ── Backend (Go / Stripe API) ────────────────────────────────────────────────
+  # ── Backend (Go / Stripe API) — ~$5/month ────────────────────────────────────
   - name: backend
     source_dir: backend
     dockerfile_path: Dockerfile
@@ -33,8 +33,6 @@ services:
         scope: RUN_TIME
         value: price_1TGUiMKSZecAC4IPkmhi2vMo
 
-      # Set to your app's public URL after first deploy (used for Stripe redirects)
-      # e.g. https://ddgnus-xxxxx.ondigitalocean.app  or your custom domain
       - key: NEXT_PUBLIC_APP_URL
         scope: RUN_TIME
         value: https://dgnus.com
@@ -42,20 +40,15 @@ services:
         scope: RUN_TIME
         value: https://dgnus.com
 
-  # ── Frontend (Next.js) ───────────────────────────────────────────────────────
+static_sites:
+  # ── Frontend (Next.js static export) — FREE ──────────────────────────────────
   - name: frontend
     source_dir: frontend
-    dockerfile_path: Dockerfile
-    http_port: 3000
-    instance_count: 1
-    instance_size_slug: basic-xxs
+    build_command: npm run build
+    output_dir: out
     routes:
       - path: /
     envs:
-      - key: NODE_ENV
-        scope: BUILD_TIME
-        value: production
-      # Set to your app's public URL after first deploy
       - key: NEXT_PUBLIC_APP_URL
         scope: BUILD_TIME
         value: https://dgnus.com

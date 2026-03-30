@@ -1,0 +1,61 @@
+name: ddgnus
+region: nyc
+
+services:
+  # ── Backend (Go / Stripe API) ────────────────────────────────────────────────
+  - name: backend
+    source_dir: backend
+    dockerfile_path: backend/Dockerfile
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    health_check:
+      http_path: /api/health
+    routes:
+      - path: /api
+    envs:
+      # Set these as encrypted secrets in the DO dashboard (never hardcode)
+      - key: STRIPE_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_PUBLISHABLE_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_WEBHOOK_SECRET
+        scope: RUN_TIME
+        type: SECRET
+
+      # Stripe price IDs (not sensitive)
+      - key: STRIPE_PRICE_WELLNESS
+        scope: RUN_TIME
+        value: price_1TGUiTKSZecAC4IPtx6BUIqK
+      - key: STRIPE_PRICE_BOOK
+        scope: RUN_TIME
+        value: price_1TGUiMKSZecAC4IPkmhi2vMo
+
+      # Set to your app's public URL after first deploy (used for Stripe redirects)
+      # e.g. https://ddgnus-xxxxx.ondigitalocean.app  or your custom domain
+      - key: NEXT_PUBLIC_APP_URL
+        scope: RUN_TIME
+        value: https://dgnus.com
+      - key: ALLOWED_ORIGIN
+        scope: RUN_TIME
+        value: https://dgnus.com
+
+  # ── Frontend (Next.js) ───────────────────────────────────────────────────────
+  - name: frontend
+    source_dir: frontend
+    dockerfile_path: frontend/Dockerfile
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+    envs:
+      - key: NODE_ENV
+        scope: BUILD_TIME
+        value: production
+      # Set to your app's public URL after first deploy
+      - key: NEXT_PUBLIC_APP_URL
+        scope: BUILD_TIME
+        value: https://dgnus.com

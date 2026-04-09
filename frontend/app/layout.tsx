@@ -1,19 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Noto_Serif } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const notoSerif = Noto_Serif({
   subsets: ["latin"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-noto-serif",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "DIDA GLOBAL NETWORKS — Wellness & Knowledge",
+  title: "DIDAS IDEA | The Editorial Sanctuary",
   description: "Heal the Soul. Expand the Mind. Holistic wellness and truth-telling knowledge.",
   icons: { icon: "/favicon.ico" },
 };
@@ -26,9 +30,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${notoSerif.variable} dark`}
     >
-      <body className="bg-zinc-950 text-zinc-200 antialiased">{children}</body>
+      <body className="bg-background text-on-surface font-body antialiased selection:bg-primary-container selection:text-on-primary-container">
+        {children}
+      </body>
     </html>
   );
 }

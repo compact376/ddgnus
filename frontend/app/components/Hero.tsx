@@ -1,5 +1,6 @@
 "use client";
 import { motion, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 
 export function Hero() {
@@ -96,35 +97,37 @@ export function Hero() {
     >
     <div className="absolute -top-12 -left-12 w-64 h-64 bg-primary/10 rounded-full blur-[100px]" />
 
-    {/* Straight & Upright Card */}
-    <div className="glass-panel p-2 rounded-xl shadow-2xl relative z-10 border border-white/5">
-      <div className="rounded-lg w-full aspect-4/5 bg-surface-container-highest overflow-hidden flex items-center justify-center">
-        <div className="text-center p-8 space-y-4">
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-            <svg
-              className="w-10 h-10 text-primary"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
-              />
-            </svg>
-          </div>
-        </div>
+    {/* Book Card */}
+    <div className="glass-panel rounded-2xl shadow-2xl relative z-10 border border-white/5 overflow-hidden flex flex-col max-w-sm mx-auto">
+      {/* Cover image — fixed height, never cropped sideways */}
+      <div className="relative w-full h-80">
+        <Image
+          src="/bookcover.jpeg"
+          alt="The Truth Within book cover"
+          fill
+          className="object-contain"
+          priority
+        />
       </div>
 
-      <div className="p-6">
-        <span className="font-headline italic text-secondary text-xl">
-          The Truth Within
-        </span>
-        <p className="text-xs text-on-surface-variant mt-2 tracking-widest uppercase">
-          Chapter IV: The Ancestral Voice
-        </p>
+      {/* Divider */}
+      <div className="h-px w-full bg-linear-to-r from-transparent via-primary/30 to-transparent" />
+
+      {/* Text */}
+      <div className="px-6 py-5 flex items-center justify-between">
+        <div>
+          <span className="font-headline italic text-secondary text-lg leading-tight block">
+            The Truth Within
+          </span>
+          <p className="text-xs text-on-surface-variant mt-1 tracking-widest uppercase">
+            Chapter IV: The Ancestral Voice
+          </p>
+        </div>
+        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+          <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+          </svg>
+        </div>
       </div>
     </div>
 </motion.div>

@@ -61,9 +61,9 @@ export function Footer() {
           <div className="md:col-span-4 space-y-5">
             <h4 className="font-label text-xs tracking-widest uppercase text-on-surface">Contact</h4>
             <div className="space-y-3 text-sm text-on-surface-variant">
-              <p>info@dgnus.com</p>
-              <p>+254 XXX XXX XXX</p>
-              <p>Nairobi, Kenya</p>
+              <p>200 West Lake Street<br />Minneapolis, Minnesota 55408</p>
+              <p>info@dfi-us.org</p>
+              <p>+1 (612) 456-2612</p>
             </div>
           </div>
         </div>

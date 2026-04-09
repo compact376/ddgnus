@@ -1,8 +1,12 @@
 "use client";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function BookPage() {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <div className="min-h-screen bg-surface pt-28 pb-24">
       {/* Ambient glow */}
@@ -31,8 +35,17 @@ export default function BookPage() {
             className="relative"
           >
             <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-secondary/10 blur-[80px] rounded-full" />
-            <div className="aspect-3/4 bg-surface-container-highest rounded-2xl overflow-hidden border border-white/5 shadow-2xl relative">
-              <div className="absolute inset-0 bg-linear-to-br from-secondary/10 via-surface-container to-surface-container-lowest flex items-center justify-center">
+            <div
+              className="aspect-3/4 bg-surface-container-highest rounded-2xl overflow-hidden border border-white/5 shadow-2xl relative cursor-pointer"
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+            >
+              {/* SVG placeholder — visible when not hovered */}
+              <motion.div
+                animate={{ opacity: hovered ? 0 : 1 }}
+                transition={{ duration: 0.3 }}
+                className="absolute inset-0 bg-linear-to-br from-secondary/10 via-surface-container to-surface-container-lowest flex items-center justify-center"
+              >
                 <div className="text-center p-8 space-y-4">
                   <div className="w-24 h-24 rounded-full bg-secondary/10 flex items-center justify-center mx-auto">
                     <svg className="w-12 h-12 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,8 +55,23 @@ export default function BookPage() {
                   <p className="font-headline italic text-secondary text-lg">My Life with the Deep State</p>
                   <p className="text-on-surface-variant text-xs tracking-widest uppercase">Mohamed Abduba Dida</p>
                 </div>
-              </div>
-              <div className="absolute bottom-6 left-6 glass-panel px-5 py-2 rounded-full text-xs font-bold tracking-widest uppercase text-secondary">
+              </motion.div>
+
+              {/* Real book cover — fades in on hover */}
+              <motion.div
+                animate={{ opacity: hovered ? 1 : 0 }}
+                transition={{ duration: 0.3 }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src="/bookcover.jpeg"
+                  alt="My Life with the Deep State book cover"
+                  fill
+                  className="object-cover"
+                />
+              </motion.div>
+
+              <div className="absolute bottom-6 left-6 glass-panel px-5 py-2 rounded-full text-xs font-bold tracking-widest uppercase text-secondary z-10">
                 Coming 2026
               </div>
             </div>

@@ -17,7 +17,7 @@ const notoSerif = Noto_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "DIDAS IDEA | The Editorial Sanctuary",
+  title: "DIDA GLOBAL NETWORKS",
   description: "Heal the Soul. Expand the Mind. Holistic wellness and truth-telling knowledge.",
   icons: { icon: "/favicon.ico" },
 };

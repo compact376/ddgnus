@@ -15,9 +15,9 @@ export function Offerings() {
         >
           <div className="max-w-2xl">
             <span className="text-secondary font-label text-xs tracking-[0.3em] uppercase mb-4 block">Our Pathways</span>
-            <h2 className="font-headline text-4xl md:text-5xl text-on-surface">The Pillars of Didas Idea</h2>
+            <h2 className="font-headline text-4xl md:text-5xl text-on-surface">Our Programs</h2>
           </div>
-          <p className="text-on-surface-variant text-sm uppercase tracking-widest hidden md:block">Scroll to explore offerings</p>
+          <p className="text-on-surface-variant text-sm uppercase tracking-widest hidden md:block">Scroll to explore programs</p>
         </motion.div>
 
         {/* Bento Grid */}
@@ -62,7 +62,7 @@ export function Offerings() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="flex-1 group relative overflow-hidden rounded-xl bg-secondary-container border border-white/5"
+              className="h-full group relative overflow-hidden rounded-xl bg-secondary-container border border-white/5"
             >
               <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,white,transparent)]" />
               <div className="relative h-full p-10 flex flex-col justify-between">
@@ -84,24 +84,6 @@ export function Offerings() {
                     </svg>
                   </Link>
                 </div>
-              </div>
-            </motion.div>
-
-            {/* Intellectual circles card */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="flex-1 group relative overflow-hidden rounded-xl bg-surface-container-highest border border-white/5"
-            >
-              <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative h-full p-10 flex flex-col justify-center">
-                <h3 className="font-headline text-2xl mb-4 text-on-surface">Intellectual Circles</h3>
-                <p className="text-on-surface-variant text-sm">
-                  Join our curated monthly symposiums for thought leaders and seekers.
-                </p>
-                <span className="mt-6 text-primary font-bold text-xs tracking-widest uppercase">Coming Winter 2025</span>
               </div>
             </motion.div>
           </div>

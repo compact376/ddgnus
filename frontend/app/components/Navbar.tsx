@@ -18,7 +18,7 @@ export function Navbar() {
       return;
     }
 
-    const sectionIds = ["mission", "offerings", "about"];
+    const sectionIds = ["mission", "about"];
     
     const observerOptions = {
       root: null,
@@ -58,7 +58,7 @@ export function Navbar() {
   const navLinks = [
     { href: "/", label: "HOME", active: isHome && activeSection === "" },
     { href: "/#mission", label: "MISSION", active: isHome && activeSection === "mission" },
-    { href: "/#offerings", label: "OFFERINGS", active: isHome && activeSection === "offerings" },
+    { href: "/services", label: "PROGRAMS", active: pathname === "/services" },
     { href: "/#about", label: "ABOUT", active: isHome && activeSection === "about" },
   ];
 
@@ -110,19 +110,7 @@ export function Navbar() {
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-6">
-          <button className="text-white/60 hover:text-primary transition-colors" aria-label="Search">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-            </svg>
-          </button>
-          <Link
-            href="/services"
-            className="hidden lg:block px-6 py-2 bg-white text-black rounded-full text-xs font-bold tracking-widest uppercase hover:bg-primary hover:text-white transition-all"
-          >
-            BOOK SESSION
-          </Link>
-        </div>
+        <div className="flex items-center gap-6" />
       </nav>
 
       {/* Mobile Menu */}
@@ -147,13 +135,6 @@ export function Navbar() {
                   {label}
                 </Link>
               ))}
-              <Link
-                href="/services"
-                onClick={() => setIsOpen(false)}
-                className="mt-2 inline-block px-8 py-3 bg-primary text-white rounded-full text-xs font-bold tracking-widest uppercase w-fit"
-              >
-                BOOK SESSION
-              </Link>
             </div>
           </motion.div>
         )}

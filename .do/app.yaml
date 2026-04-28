@@ -45,7 +45,7 @@ services:
         value: https://dgnus.com
 
 static_sites:
-  # ── Frontend (Next.js static export) — FREE ──────────────────────────────────
+  # ── Frontend (Vite static build) — FREE ──────────────────────────────────
   - name: frontend
     github:
       repo: compact376/ddgnus
@@ -53,7 +53,7 @@ static_sites:
       deploy_on_push: true
     source_dir: frontend
     build_command: npm run build
-    output_dir: out
+    output_dir: dist
     routes:
       - path: /
     envs:

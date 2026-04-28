@@ -1,13 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/compact376/dgnus-backend/internal/handler"
+	"github.com/compact376/dgnus-backend/internal/httputil"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
@@ -78,11 +78,11 @@ func corsMiddleware(next http.Handler) http.Handler {
 }
 
 func handleHealth(w http.ResponseWriter, r *http.Request) {
-	writeJSON(w, map[string]string{"status": "healthy"})
+	httputil.WriteJSON(w, map[string]string{"status": "healthy"})
 }
 
 func handleConfig(w http.ResponseWriter, r *http.Request) {
-	writeJSON(w, map[string]string{
+	httputil.WriteJSON(w, map[string]string{
 		"publishableKey": os.Getenv("STRIPE_PUBLISHABLE_KEY"),
 	})
 }
@@ -96,6 +96,9 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sigHeader := r.Header.Get("Stripe-Signature")
+	log.Printf("Webhook received: signature=%q payload_size=%d", sigHeader, len(payload))
+
 	webhookSecret := os.Getenv("STRIPE_WEBHOOK_SECRET")
 	if webhookSecret == "" {
 		log.Println("Warning: STRIPE_WEBHOOK_SECRET not set, skipping signature verification")
@@ -103,25 +106,22 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	event, err := webhook.ConstructEvent(payload, r.Header.Get("Stripe-Signature"), webhookSecret)
+	event, err := webhook.ConstructEvent(payload, sigHeader, webhookSecret)
 	if err != nil {
 		log.Printf("Webhook: signature verification failed: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
+	log.Printf("Webhook parsed: id=%s type=%s", event.ID, event.Type)
+
 	switch event.Type {
 	case "checkout.session.completed":
-		log.Printf("Webhook: payment completed, event %s", event.ID)
+		log.Printf("Webhook: checkout.session.completed received for event %s", event.ID)
 		// TODO: fulfill order (send confirmation email, provision access, etc.)
 	default:
 		log.Printf("Webhook: unhandled event type %s", event.Type)
 	}
 
 	w.WriteHeader(http.StatusOK)
-}
-
-func writeJSON(w http.ResponseWriter, data any) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(data)
 }

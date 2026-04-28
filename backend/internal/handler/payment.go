@@ -6,49 +6,57 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/compact376/dgnus-backend/internal/httputil"
 	"github.com/stripe/stripe-go/v85"
 	"github.com/stripe/stripe-go/v85/checkout/session"
 )
 
 type CreateCheckoutRequest struct {
-	Service string `json:"service"`
-	Email   string `json:"email"`
+	Item  string `json:"item"`
+	Email string `json:"email"`
 }
 
 func HandleCreateCheckout(w http.ResponseWriter, r *http.Request) {
 	var req CreateCheckoutRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeJSONError(w, "Invalid request body", http.StatusBadRequest)
+		httputil.WriteJSONError(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	if req.Email == "" {
-		writeJSONError(w, "Email is required", http.StatusBadRequest)
-		return
-	}
+	log.Printf("CreateCheckout request received: item=%q email=%q", req.Item, req.Email)
 
 	var priceID string
 
-	switch req.Service {
-	case "wellness":
-		priceID = os.Getenv("STRIPE_PRICE_WELLNESS")
-	case "book":
-		priceID = os.Getenv("STRIPE_PRICE_BOOK")
+	switch req.Item {
+	case "soul_body":
+		priceID = os.Getenv("STRIPE_PRICE_SOUL_BODY")
+	case "deep_state":
+		priceID = os.Getenv("STRIPE_PRICE_DEEP_STATE")
+	case "research":
+		priceID = os.Getenv("STRIPE_PRICE_RESEARCH")
+	case "scouting":
+		priceID = os.Getenv("STRIPE_PRICE_SCOUTING")
+	case "book_preorder":
+		priceID = os.Getenv("STRIPE_PRICE_BOOK_PREORDER")
 	default:
-		writeJSONError(w, "Invalid service type", http.StatusBadRequest)
+		httputil.WriteJSONError(w, "Invalid checkout item", http.StatusBadRequest)
 		return
 	}
 
 	if priceID == "" {
-		writeJSONError(w, "Price ID not configured", http.StatusInternalServerError)
+		httputil.WriteJSONError(w, "Price ID not configured", http.StatusInternalServerError)
 		return
 	}
 
+	appURL := os.Getenv("NEXT_PUBLIC_APP_URL")
+	if appURL == "" {
+		appURL = "http://localhost:3000"
+	}
+
 	params := &stripe.CheckoutSessionParams{
-		Mode:          stripe.String(string(stripe.CheckoutSessionModePayment)),
-		SuccessURL:    stripe.String(os.Getenv("NEXT_PUBLIC_APP_URL") + "/success?session_id={CHECKOUT_SESSION_ID}"),
-		CancelURL:     stripe.String(os.Getenv("NEXT_PUBLIC_APP_URL") + "/payment"),
-		CustomerEmail: stripe.String(req.Email),
+		Mode:       stripe.String(string(stripe.CheckoutSessionModePayment)),
+		SuccessURL: stripe.String(appURL + "/payments?success=true"),
+		CancelURL:  stripe.String(appURL + "/payments?canceled=true"),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			{
 				Price:    stripe.String(priceID),
@@ -56,31 +64,26 @@ func HandleCreateCheckout(w http.ResponseWriter, r *http.Request) {
 			},
 		},
 		Metadata: map[string]string{
-			"service": req.Service,
-			"email":   req.Email,
+			"item": req.Item,
 		},
+	}
+
+	if req.Email != "" {
+		params.CustomerEmail = stripe.String(req.Email)
+		params.Metadata["email"] = req.Email
 	}
 
 	sess, err := session.New(params)
 	if err != nil {
 		log.Printf("Stripe error: %v", err)
-		writeJSONError(w, "Failed to create checkout session", http.StatusInternalServerError)
+		httputil.WriteJSONError(w, "Failed to create checkout session", http.StatusInternalServerError)
 		return
 	}
 
-	writeJSON(w, map[string]interface{}{
-		"url":     sess.URL,
-		"service": req.Service,
+	log.Printf("Checkout session created: item=%q session_id=%q", req.Item, sess.ID)
+
+	httputil.WriteJSON(w, map[string]interface{}{
+		"url":  sess.URL,
+		"item": req.Item,
 	})
-}
-
-// Helper functions
-func writeJSON(w http.ResponseWriter, data interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(data)
-}
-
-func writeJSONError(w http.ResponseWriter, message string, code int) {
-	w.WriteHeader(code)
-	writeJSON(w, map[string]string{"error": message})
 }

@@ -17,8 +17,10 @@ import {
 export default function Payments() {
   const [searchParams] = useSearchParams();
   const [selectedItems, setSelectedItems] = useState<ProductKey[]>(DEFAULT_SELECTED_ITEMS);
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
 
   const success = searchParams.get('success') === 'true';
   const canceled = searchParams.get('canceled') === 'true';
@@ -31,6 +33,20 @@ export default function Payments() {
       setSelectedItems([itemFromUrl]);
     }
   }, [searchParams]);
+
+  const validateEmail = (email: string): boolean => {
+    if (!email) {
+      setEmailError('Email is required for payment confirmation');
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
 
   const totalAmount = useMemo(() => {
     return selectedItems.reduce((sum, key) => sum + PRODUCTS[key].priceCents, 0);
@@ -63,6 +79,10 @@ export default function Payments() {
       return;
     }
 
+    if (!validateEmail(email)) {
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -72,6 +92,7 @@ export default function Payments() {
 
       const requestBody: CheckoutPayload = {
         items: selectedItems,
+        email: email.trim(),
       };
 
       const response = await fetch(`${apiBaseUrl}/api/create-checkout`, {
@@ -246,10 +267,34 @@ export default function Payments() {
                     <p className="text-xs text-sage-500 mt-1">{PAGE_COPY.paymentNote}</p>
                   </div>
 
+                  <div className="mt-6">
+                    <label htmlFor="email" className="block text-sm font-medium text-on-surface-variant mb-2">
+                      Email Address <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (emailError) validateEmail(e.target.value);
+                      }}
+                      placeholder="you@example.com"
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-heritage-red focus:border-transparent transition-colors ${
+                        emailError ? 'border-red-300' : 'border-sage-300'
+                      }`}
+                      disabled={loading}
+                    />
+                    {emailError && <p className="text-red-600 text-xs mt-1">{emailError}</p>}
+                    <p className="text-xs text-sage-500 mt-1">
+                      Required for payment confirmation and notifications
+                    </p>
+                  </div>
+
                   <button
                     onClick={handleCheckout}
                     disabled={loading || selectedItems.length === 0}
-                    className="mt-10 w-full bg-heritage-red hover:bg-heritage-red-light disabled:bg-heritage-red/70 text-white font-bold uppercase tracking-widest py-6 rounded-2xl text-lg transition-all active:scale-[0.985]"
+                    className="mt-6 w-full bg-heritage-red hover:bg-heritage-red-light disabled:bg-heritage-red/70 text-white font-bold uppercase tracking-widest py-6 rounded-2xl text-lg transition-all active:scale-[0.985]"
                   >
                     {loading ? PAGE_COPY.loadingText : PAGE_COPY.checkoutButton}
                   </button>

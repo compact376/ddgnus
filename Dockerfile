@@ -11,11 +11,12 @@ COPY frontend/public ./frontend/public
 COPY frontend/src ./frontend/src
 
 WORKDIR /app/frontend
-RUN npm install
+RUN npm install --omit=dev
 RUN npm run build
 
 FROM nginx:alpine
-COPY --from=builder /app/frontend/dist /usr/share/nginx/html
+RUN rm -rf /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/frontend/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

@@ -33,7 +33,7 @@ export const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <div className="font-serif text-2xl font-bold tracking-tight text-heritage-red" id="nav-logo">
-          DIDA GLOBAL NETWORKS
+          DIDA GLOBAL NETWORK
         </div>
 
         <div className="hidden md:flex items-center gap-10" id="nav-links">

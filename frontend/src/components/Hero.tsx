@@ -46,10 +46,10 @@ export const Hero = () => {
           className="max-w-4xl"
         >
           <h1 className="font-serif text-3xl md:text-6xl lg:text-[7rem] font-bold leading-[1.1] mb-3 drop-shadow-2xl" id="hero-title">
-            The One Family <br className="hidden md:block" />Community Network
+            A Nation <br className="hidden md:block" />Under One God
           </h1>
           <p className="text-sm md:text-base lg:text-lg font-light mb-5 text-white/90 max-w-xl leading-relaxed" id="hero-subtitle">
-            Neighbors by place, family by creation. A Community Integration Initiative.
+            Neighbors by place, family by creation.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4" id="hero-actions">

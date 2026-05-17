@@ -3,56 +3,20 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowLeft, Check, Shield, CreditCard, Trash2, Star } from 'lucide-react';
 import { Footer } from '../components/Footer';
-
-// Note: dotenv.config() should be called in your server or vite.config.ts
-// This component will now use process.env
-
-const products = {
-  soul_body: {
-    key: 'soul_body' as const,
-    title: 'Soul & Body Wellness',
-    description: 'A transformative 8-week holistic program integrating clinical wellness practices with deep spiritual restoration.',
-    price: 95000,
-    currency: 'KSh',
-    feature: 'Immersive Program',
-    icon: '🌿',
-    highlight: 'Most Popular' as const,
-  },
-  research: {
-    key: 'research' as const,
-    title: 'Global Islamic Research Ethical',
-    description: 'A rigorous research program designed to cultivate ethical leadership and meaningful community impact through faith-informed inquiry.',
-    price: 85000,
-    currency: 'KSh',
-    feature: 'Advanced Program',
-    icon: '📖',
-  },
-  scouting: {
-    key: 'scouting' as const,
-    title: 'Scouting Movement – Islamic Perspective',
-    description: 'Develop principled leadership, character, and service through a faith-centered scouting experience.',
-    price: 65000,
-    currency: 'KSh',
-    feature: 'Leadership Program',
-    icon: '🪵',
-  },
-  book_preorder: {
-    key: 'book_preorder' as const,
-    title: 'Book Preorder',
-    description: 'Get the limited launch edition of "My Life with the Deep State" — signed copy with early access.',
-    price: 6500,
-    currency: 'KSh',
-    feature: 'Book',
-    icon: '📘',
-  },
-} as const;
-
-type ProductKey = keyof typeof products;
-type Product = (typeof products)[ProductKey];
+import {
+  ApiResponse,
+  CheckoutPayload,
+  DEFAULT_SELECTED_ITEMS,
+  PAGE_COPY,
+  Product,
+  ProductKey,
+  PRODUCT_LIST,
+  PRODUCTS,
+} from '../shared/constants';
 
 export default function Payments() {
   const [searchParams] = useSearchParams();
-  const [selectedItems, setSelectedItems] = useState<ProductKey[]>([]);
+  const [selectedItems, setSelectedItems] = useState<ProductKey[]>(DEFAULT_SELECTED_ITEMS);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -63,20 +27,25 @@ export default function Payments() {
   useEffect(() => {
     const itemFromUrl = searchParams.get('item') as ProductKey | null;
 
-    if (itemFromUrl && products[itemFromUrl]) {
+    if (itemFromUrl && PRODUCTS[itemFromUrl]) {
       setSelectedItems([itemFromUrl]);
-    } else {
-      setSelectedItems(['soul_body']);
     }
   }, [searchParams]);
 
   const totalAmount = useMemo(() => {
-    return selectedItems.reduce((sum, key) => sum + products[key].price, 0);
+    return selectedItems.reduce((sum, key) => sum + PRODUCTS[key].priceCents, 0);
   }, [selectedItems]);
 
   const selectedProductsList = useMemo(() => {
-    return selectedItems.map((key) => products[key]);
+    return selectedItems.map((key) => PRODUCTS[key]);
   }, [selectedItems]);
+
+  const formatPrice = (priceCents: number, currency: string) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+    }).format(priceCents / 100);
+  };
 
   const toggleItem = (key: ProductKey) => {
     setSelectedItems((prev) =>
@@ -90,7 +59,7 @@ export default function Payments() {
 
   const handleCheckout = async () => {
     if (selectedItems.length === 0) {
-      setError('Please select at least one offering.');
+      setError(PAGE_COPY.noSelectionError);
       return;
     }
 
@@ -101,10 +70,14 @@ export default function Payments() {
       // Using process.env as requested (loaded via dotenv)
       const apiBaseUrl = process.env.VITE_API_URL || 'http://localhost:8080';
 
+      const requestBody: CheckoutPayload = {
+        items: selectedItems,
+      };
+
       const response = await fetch(`${apiBaseUrl}/api/create-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: selectedItems }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -112,7 +85,9 @@ export default function Payments() {
         throw new Error(errorData?.error || 'Failed to create checkout session.');
       }
 
-      const { url } = await response.json();
+      const responseData = (await response.json()) as ApiResponse<{ url: string }>;
+      const url = responseData?.data?.url || responseData?.url;
+
       if (!url) throw new Error('No checkout URL received from server.');
 
       window.location.href = url;
@@ -143,37 +118,37 @@ export default function Payments() {
             {/* Header */}
             <div className="max-w-3xl mx-auto text-center mb-12">
               <span className="inline-block px-4 py-1.5 bg-heritage-red/10 text-heritage-red text-xs font-bold tracking-widest rounded-full">
-                LIMITED COHORTS
+                {PAGE_COPY.limitedCohorts}
               </span>
               <h1 className="text-5xl font-serif font-semibold text-heritage-red mt-6 leading-tight">
-                Begin Your Transformation
+                {PAGE_COPY.heading}
               </h1>
               <p className="mt-5 text-lg text-on-surface-variant">
-                Choose the programs that resonate with your journey. Every offering is designed to create lasting impact.
+                {PAGE_COPY.subheading}
               </p>
             </div>
 
             {success && (
               <div className="mb-10 p-6 bg-emerald-50 border border-emerald-200 rounded-2xl text-center text-emerald-900">
-                ✅ Thank you! Your payment was successful.
+                {PAGE_COPY.successMessage}
               </div>
             )}
 
             {canceled && (
               <div className="mb-10 p-6 bg-amber-50 border border-amber-200 rounded-2xl text-center text-amber-900">
-                Payment was canceled. You can try again below.
+                {PAGE_COPY.cancelMessage}
               </div>
             )}
 
             <div className="grid lg:grid-cols-12 gap-12">
               {/* Product Selection */}
               <div className="lg:col-span-7">
-                <h2 className="text-2xl font-semibold mb-8">Select Your Path</h2>
+                <h2 className="text-2xl font-semibold mb-8">{PAGE_COPY.selectYourPath}</h2>
 
                 <div className="space-y-6">
-                  {Object.values(products).map((product: Product) => {
+                  {PRODUCT_LIST.map((product: Product) => {
                     const isSelected = selectedItems.includes(product.key);
-                    const isPopular = 'highlight' in product && product.highlight === 'Most Popular';
+                    const isPopular = product.highlight === 'Most Popular';
 
                     return (
                       <div
@@ -196,11 +171,16 @@ export default function Payments() {
                             )}
 
                             <div className="flex justify-between items-start">
-                              <h3 className="text-2xl font-semibold leading-tight pr-4">
-                                {product.title}
-                              </h3>
+                              <div>
+                                <h3 className="text-2xl font-semibold leading-tight pr-4">
+                                  {product.title}
+                                </h3>
+                                <p className="text-sm text-sage-500 mt-2">
+                                  {product.category} • Released {product.releaseDate} • Updated {product.updatedDate}
+                                </p>
+                              </div>
                               <p className="text-2xl font-bold text-heritage-red whitespace-nowrap">
-                                {product.currency} {product.price.toLocaleString('en-KE')}
+                                {formatPrice(product.priceCents, product.currency)}
                               </p>
                             </div>
 
@@ -240,7 +220,7 @@ export default function Payments() {
                           </div>
                           <div className="flex items-center gap-4">
                             <p className="font-semibold text-lg">
-                              {product.currency} {product.price.toLocaleString('en-KE')}
+                              {formatPrice(product.priceCents, product.currency)}
                             </p>
                             <button
                               onClick={(e) => { e.stopPropagation(); removeItem(product.key); }}
@@ -253,17 +233,17 @@ export default function Payments() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sage-500 py-12 text-center">No programs selected yet</p>
+                    <p className="text-sage-500 py-12 text-center">{PAGE_COPY.noProgramsSelectedYet}</p>
                   )}
 
                   <div className="border-t border-sage-300 pt-6 mt-4">
                     <div className="flex justify-between items-baseline">
-                      <span className="text-lg font-medium">Total Investment</span>
+                      <span className="text-lg font-medium">{PAGE_COPY.investmentTitle}</span>
                       <span className="text-3xl font-bold text-heritage-red">
-                        KSh {totalAmount.toLocaleString('en-KE')}
+                        {formatPrice(totalAmount, 'USD')}
                       </span>
                     </div>
-                    <p className="text-xs text-sage-500 mt-1">One-time payment • Secure checkout</p>
+                    <p className="text-xs text-sage-500 mt-1">{PAGE_COPY.paymentNote}</p>
                   </div>
 
                   <button
@@ -271,7 +251,7 @@ export default function Payments() {
                     disabled={loading || selectedItems.length === 0}
                     className="mt-10 w-full bg-heritage-red hover:bg-heritage-red-light disabled:bg-heritage-red/70 text-white font-bold uppercase tracking-widest py-6 rounded-2xl text-lg transition-all active:scale-[0.985]"
                   >
-                    {loading ? 'Creating Secure Checkout...' : `Complete Enrollment – Pay Now`}
+                    {loading ? PAGE_COPY.loadingText : PAGE_COPY.checkoutButton}
                   </button>
 
                   {error && <p className="text-red-600 text-sm text-center mt-4">{error}</p>}

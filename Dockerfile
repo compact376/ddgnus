@@ -11,7 +11,7 @@ COPY frontend/public ./frontend/public
 COPY frontend/src ./frontend/src
 
 WORKDIR /app/frontend
-RUN npm install --omit=dev
+RUN npm install
 RUN npm run build
 
 FROM nginx:alpine

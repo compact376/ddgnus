@@ -88,7 +88,7 @@ export default function Payments() {
 
     try {
       // Using process.env as requested (loaded via dotenv)
-      const apiBaseUrl = process.env.VITE_API_URL || 'http://localhost:8080';
+      const apiBaseUrl = process.env.VITE_API_URL || 'https://gateway.api.dgnus.com';
 
       const requestBody: CheckoutPayload = {
         items: selectedItems,

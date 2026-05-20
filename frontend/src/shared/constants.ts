@@ -110,7 +110,7 @@ export const PRODUCTS: Record<ProductKey, Product> = {
     title: 'Book Preorder',
     description:
       'Get the limited launch edition of "My Life with the Deep State" — signed copy with early access.',
-    priceCents: 9900,
+    priceCents: 2000,
     currency: 'USD',
     icon: '📘',
     feature: 'Book',

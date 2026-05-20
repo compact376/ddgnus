@@ -12,9 +12,9 @@ export const Footer = () => {
               <p>
                 Dida Global Network<br />
                 200 West Lake Street #465<br />
-                Minneapolis, MN 50508
+                Minneapolis, MN 55408
               </p>
-              <p>Phone: 512-456-2512</p>
+              <p>Phone: +1 (612) 456-2612</p>
               <p>Email: didaglobalnetwork@gmail.com</p>
             </div>
             

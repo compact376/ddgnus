@@ -93,16 +93,16 @@ export const Programs = () => {
             />
           </div>
 
-          <div className="lg:col-span-7">
-            <ProgramCard 
-              title="My Life with the Deep State"
-              description="An inspirational journey by our founder exploring the intersection of personal faith and structural environments."
-              icon={BookOpen}
-              variant="primary"
-              index={1}
-              to="/programs/my-life-with-the-deep-state"
-            />
-          </div>
+<div className="lg:col-span-7">
+             <ProgramCard 
+               title="Publications"
+               description="Thought-provoking works exploring faith, identity, and the intersection of spirituality with contemporary challenges."
+               icon={BookOpen}
+               variant="primary"
+               index={1}
+               to="/programs/publications"
+             />
+           </div>
 
           <div className="lg:col-span-7">
             <ProgramCard 

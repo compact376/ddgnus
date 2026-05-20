@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import Contact from './pages/Contact';
 import Payments from './pages/Payments';
 import SoulBodyWellness from './pages/programs/SoulBodyWellness';
-import MyLifeWithTheDeepState from './pages/programs/MyLifeWithTheDeepState';
+import Publications from './pages/programs/Publications';
 import GlobalIslamicResearchEthical from './pages/programs/GlobalIslamicResearchEthical';
 import ScoutingMovement from './pages/programs/ScoutingMovement';
 import { Navbar } from './components/Navbar';
@@ -21,7 +21,7 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/programs/soul-body-wellness" element={<SoulBodyWellness />} />
-        <Route path="/programs/my-life-with-the-deep-state" element={<MyLifeWithTheDeepState />} />
+        <Route path="/programs/publications" element={<Publications />} />
         <Route path="/programs/global-islamic-research-ethical" element={<GlobalIslamicResearchEthical />} />
         <Route path="/programs/scouting-movement" element={<ScoutingMovement />} />
       </Routes>

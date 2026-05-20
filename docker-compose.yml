@@ -1,3 +1,45 @@
+# services:
+#   api-gateway:
+#     build:
+#       context: ./backend
+#       dockerfile: services/api_gateway/Dockerfile
+#     image: ddgnus/api-gateway:latest
+#     env_file:
+#       - backend/.env
+#     environment:
+#       GATEWAY_PORT: '8080'
+#       PAYMENT_SERVICE_URL: 'http://payment-service:8081'
+#       ALLOWED_ORIGIN: 'https://dgnus.com'
+#     depends_on:
+#       - payment-service
+
+#   payment-service:
+#     build:
+#       context: ./backend
+#       dockerfile: services/payment-service/Dockerfile
+#     image: ddgnus/payment-service:latest
+#     env_file:
+#       - backend/.env
+#     environment:
+#       PORT: '8081'
+#       ENVIRONMENT: 'production'
+#       ALLOWED_ORIGIN: 'https://dgnus.com'
+#     depends_on: []
+
+#   frontend:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     image: ddgnus/frontend:latest
+#     env_file:
+#       - .env
+#     environment:
+#       VITE_API_URL: 'https://gateway.api.dgnus.com'
+#     depends_on:
+#       - api-gateway
+#       - payment-service
+
+
 services:
   api-gateway:
     build:
@@ -30,11 +72,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # FIX: Convert runtime environment variables into build arguments
+      args:
+        VITE_API_URL: 'https://gateway.api.dgnus.com'
     image: ddgnus/frontend:latest
-    env_file:
-      - .env
-    environment:
-      VITE_API_URL: 'https://gateway.api.dgnus.com'
+    # REMOVED: env_file and environment sections since Nginx cannot read them at runtime
     depends_on:
       - api-gateway
       - payment-service
